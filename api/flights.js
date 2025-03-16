@@ -3,12 +3,8 @@ const axios = require('axios');
 module.exports = async (req, res) => {
   try {
     const airport = req.query.airport === 'MXP' ? 'mxp' : 'lin';
-    const now = new Date();
-    const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000); // 24 ore fa
-
-    // Formato data con + e %3A
-    const dateFrom = `${oneDayAgo.toISOString().split('T')[0]}+00%3A00`; // Es. 2025-03-15+00%3A00
-    const dateTo = `${now.toISOString().split('T')[0]}+23%3A59`; // Es. 2025-03-16+23%3A59
+    const dateFrom = '2025-03-16+22%3A29'; // Valore fisso dal curl
+    const dateTo = '2025-03-16+23%3A59';   // Valore fisso dal curl
 
     const apiUrl = 'https://apiextra.seamilano.eu/ols-flights/v1/en/operative/flights/lists';
     const response = await axios.get(apiUrl, {
