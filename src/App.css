@@ -46,3 +46,68 @@
     text-decoration: line-through;
     color: #888;
   }
+
+  /* Importa un font moderno (opzionale) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #f5f5f5; /* sfondo chiaro */
+  color: #333;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.app-header {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Stile per le card usate nei widget e tabelle */
+.card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 15px;
+}
+
+/* Stile per la tabella voli */
+.flight-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flight-table th,
+.flight-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.flight-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Stile specifico per i widget di riepilogo e il grafico */
+.summary-widget,
+.airline-chart {
+  text-align: center;
+}
+
+.airline-chart canvas {
+  max-width: 100%;
+  margin: 0 auto;
+}

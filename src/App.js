@@ -4,6 +4,7 @@ import MapComponent from './MapComponent';
 import FlightTable from './FlightTable';
 import SummaryWidget from './SummaryWidget';
 import AirlineChart from './AirlineChart';
+import './App.css'; // importa il nuovo file CSS
 
 function App() {
   const [linFlights, setLinFlights] = useState([]);
@@ -39,17 +40,29 @@ function App() {
   const uniqueOrigins = [...new Set(allFlights.map(flight => flight.origin))];
 
   return (
-    <div style={{ backgroundColor: '#000000', color: '#00ff00', padding: '20px' }}>
-      <h1 style={{ textAlign: 'center' }}>Dashboard Aeroporti Milano</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-        <MapComponent origins={uniqueOrigins} />
-        <FlightTable flights={linFlights} title="Arrivi Linate (LIN)" />
-        <FlightTable flights={mxpFlights} title="Arrivi Malpensa (MXP)" />
+    <div className="app-container">
+      <h1 className="app-header">Dashboard Aeroporti Milano</h1>
+      
+      <div className="grid-container">
+        <div className="card">
+          <MapComponent origins={uniqueOrigins} />
+        </div>
+        <div className="card flight-table">
+          <FlightTable flights={linFlights} title="Arrivi Linate (LIN)" />
+        </div>
+        <div className="card flight-table">
+          <FlightTable flights={mxpFlights} title="Arrivi Malpensa (MXP)" />
+        </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '20px' }}>
-        <SummaryWidget flights={allFlights} />
-        <AirlineChart flights={allFlights} />
-        {/* Aggiungi altri widget qui se vuoi */}
+
+      <div className="grid-container" style={{ marginTop: '20px' }}>
+        <div className="card summary-widget">
+          <SummaryWidget flights={allFlights} />
+        </div>
+        <div className="card airline-chart">
+          <AirlineChart flights={allFlights} />
+        </div>
+        {/* Aggiungi altri widget o grafici se necessario */}
       </div>
     </div>
   );

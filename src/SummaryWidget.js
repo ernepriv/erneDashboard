@@ -10,7 +10,7 @@ const SummaryWidget = ({ flights }) => {
   }).length;
 
   return (
-    <div style={{ backgroundColor: '#1a1a1a', color: '#00ff00', padding: '10px', borderRadius: '5px' }}>
+    <div>
       <h3>Riepilogo Voli</h3>
       <p>Totale Voli: {totalFlights}</p>
       <p>Voli in Ritardo: {delayedFlights}</p>
