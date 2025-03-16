@@ -1,98 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import axios from 'axios';
+import MapComponent from './MapComponent';
+import FlightTable from './FlightTable';
+import SummaryWidget from './SummaryWidget';
+import AirlineChart from './AirlineChart';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [input, setInput] = useState('');
-  const [linateFlights, setLinateFlights] = useState([]);
-  const [malpensaFlights, setMalpensaFlights] = useState([]);
+  const [linFlights, setLinFlights] = useState([]);
+  const [mxpFlights, setMxpFlights] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    setTasks(savedTasks);
+    const fetchFlights = async (airport) => {
+      try {
+        const response = await axios.get(`/api/flights?airport=${airport}`);
+        return response.data.flights;
+      } catch (err) {
+        setError(err.message);
+        return [];
+      }
+    };
 
-    fetch('/api/flights?airport=LIN')
-      .then(res => res.json())
-      .then(data => setLinateFlights(data.flights || []))
-      .catch(err => console.error('Errore Linate:', err));
+    const loadData = async () => {
+      const linData = await fetchFlights('LIN');
+      const mxpData = await fetchFlights('MXP');
+      setLinFlights(linData);
+      setMxpFlights(mxpData);
+    };
 
-    fetch('/api/flights?airport=MXP')
-      .then(res => res.json())
-      .then(data => setMalpensaFlights(data.flights || []))
-      .catch(err => console.error('Errore Malpensa:', err));
+    loadData();
   }, []);
 
-  const addTask = () => {
-    if (!input.trim()) return;
-    const newTasks = [...tasks, { text: input, completed: false }];
-    setTasks(newTasks);
-    setInput('');
-    localStorage.setItem('tasks', JSON.stringify(newTasks));
-  };
+  if (error) {
+    return <div style={{ color: 'red' }}>Errore: {error}</div>;
+  }
 
-  const toggleTask = (index) => {
-    const newTasks = tasks.map((task, i) =>
-      i === index ? { ...task, completed: !task.completed } : task
-    );
-    setTasks(newTasks);
-    localStorage.setItem('tasks', JSON.stringify(newTasks));
-  };
-
-  const deleteTask = (index) => {
-    const newTasks = tasks.filter((_, i) => i !== index);
-    setTasks(newTasks);
-    localStorage.setItem('tasks', JSON.stringify(newTasks));
-  };
+  const allFlights = [...linFlights, ...mxpFlights];
+  const uniqueOrigins = [...new Set(allFlights.map(flight => flight.origin))];
 
   return (
-    <div className="dashboard">
-      <h1>Dashboard To-Do & Voli</h1>
-      <div className="task-section">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Aggiungi un task"
-        />
-        <button onClick={addTask}>Aggiungi</button>
-        <ul>
-          {tasks.map((task, index) => (
-            <li key={index} className={task.completed ? 'completed' : ''}>
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleTask(index)}
-              />
-              <span>{task.text}</span>
-              <button onClick={() => deleteTask(index)}>Elimina</button>
-            </li>
-          ))}
-        </ul>
+    <div style={{ backgroundColor: '#000000', color: '#00ff00', padding: '20px' }}>
+      <h1 style={{ textAlign: 'center' }}>Dashboard Aeroporti Milano</h1>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+        <MapComponent origins={uniqueOrigins} />
+        <FlightTable flights={linFlights} title="Arrivi Linate (LIN)" />
+        <FlightTable flights={mxpFlights} title="Arrivi Malpensa (MXP)" />
       </div>
-      <div className="monitoring-section">
-        <h2>Arrivi Linate (LIN)</h2>
-        {linateFlights.length > 0 ? (
-          <ul>
-            {linateFlights.map((flight, index) => (
-              <li key={index}>
-                {flight.flightNumber} - {flight.airline} da {flight.origin} ({flight.scheduled}) - {flight.status}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Nessun dato disponibile</p>
-        )}
-        <h2>Arrivi Malpensa (MXP)</h2>
-        {malpensaFlights.length > 0 ? (
-          <ul>
-            {malpensaFlights.map((flight, index) => (
-              <li key={index}>
-                {flight.flightNumber} - {flight.airline} da {flight.origin} ({flight.scheduled}) - {flight.status}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Nessun dato disponibile</p>
-        )}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '20px' }}>
+        <SummaryWidget flights={allFlights} />
+        <AirlineChart flights={allFlights} />
+        {/* Aggiungi altri widget qui se vuoi */}
       </div>
     </div>
   );
