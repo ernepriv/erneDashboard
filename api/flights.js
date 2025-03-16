@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
       },
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'keyId': '6bc034ea-ae66-40ce-891e-3dccf63cb2eb', // Chiave API trovata
+        'keyId': '6bc034ea-ae66-40ce-891e-3dccf63cb2eb',
         'Accept': '*/*',
         'Origin': airport === 'mxp' ? 'https://www.milanomalpensa-airport.com' : 'https://www.milanolinate-airport.com',
         'Referer': airport === 'mxp' ? 'https://www.milanomalpensa-airport.com/' : 'https://www.milanolinate-airport.com/'
@@ -37,7 +37,11 @@ module.exports = async (req, res) => {
 
     res.json({ flights });
   } catch (error) {
-    console.error('Errore:', error.message);
+    console.error('Errore dettagliato:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
     res.status(500).json({ error: 'Errore nel recupero dati: ' + error.message });
   }
 };
