@@ -4,10 +4,15 @@ import './App.css';
 function App() {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState('');
+  const [scrapedData, setScrapedData] = useState([]);
 
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     setTasks(savedTasks);
+    fetch('/api/scrape')
+      .then(res => res.json())
+      .then(data => setScrapedData(data.titles || []))
+      .catch(err => console.error(err));
   }, []);
 
   const addTask = () => {
@@ -58,7 +63,9 @@ function App() {
       </div>
       <div className="monitoring-section">
         <h2>Dati di Monitoraggio</h2>
-        <p>(Dati da web scraping verranno qui)</p>
+          {scrapedData.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
       </div>
     </div>
   );
