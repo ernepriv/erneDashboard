@@ -4,8 +4,10 @@ module.exports = async (req, res) => {
   try {
     const airport = req.query.airport === 'MXP' ? 'mxp' : 'lin';
     const now = new Date();
+    const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000); // 24 ore fa
+
     // Formato data con + e %3A
-    const dateFrom = `${now.toISOString().split('T')[0]}+${now.toTimeString().slice(0, 5).replace(':', '%3A')}`; // Es. 2025-03-16+14%3A30
+    const dateFrom = `${oneDayAgo.toISOString().split('T')[0]}+00%3A00`; // Es. 2025-03-15+00%3A00
     const dateTo = `${now.toISOString().split('T')[0]}+23%3A59`; // Es. 2025-03-16+23%3A59
 
     const apiUrl = 'https://apiextra.seamilano.eu/ols-flights/v1/en/operative/flights/lists';
