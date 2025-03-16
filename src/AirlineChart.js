@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
 
 const AirlineChart = ({ flights }) => {
   const chartRef = useRef(null);
@@ -16,7 +15,7 @@ const AirlineChart = ({ flights }) => {
     }, {});
 
     const ctx = chartRef.current.getContext('2d');
-    chartInstance.current = new Chart(ctx, {
+    chartInstance.current = new window.Chart(ctx, {  // Usa window.Chart invece di Chart
       type: 'pie',
       data: {
         labels: Object.keys(airlines),
