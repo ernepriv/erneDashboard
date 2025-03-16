@@ -4,15 +4,22 @@ import './App.css';
 function App() {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState('');
-  const [scrapedData, setScrapedData] = useState([]);
+  const [linateFlights, setLinateFlights] = useState([]);
+  const [malpensaFlights, setMalpensaFlights] = useState([]);
 
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     setTasks(savedTasks);
-    fetch('/api/scrape')
+
+    fetch('/api/flights?airport=LIN')
       .then(res => res.json())
-      .then(data => setScrapedData(data.titles || []))
-      .catch(err => console.error(err));
+      .then(data => setLinateFlights(data.flights || []))
+      .catch(err => console.error('Errore Linate:', err));
+
+    fetch('/api/flights?airport=MXP')
+      .then(res => res.json())
+      .then(data => setMalpensaFlights(data.flights || []))
+      .catch(err => console.error('Errore Malpensa:', err));
   }, []);
 
   const addTask = () => {
@@ -39,7 +46,7 @@ function App() {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard To-Do</h1>
+      <h1>Dashboard To-Do & Voli</h1>
       <div className="task-section">
         <input
           value={input}
@@ -62,10 +69,30 @@ function App() {
         </ul>
       </div>
       <div className="monitoring-section">
-        <h2>Dati di Monitoraggio</h2>
-          {scrapedData.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
+        <h2>Arrivi Linate (LIN)</h2>
+        {linateFlights.length > 0 ? (
+          <ul>
+            {linateFlights.map((flight, index) => (
+              <li key={index}>
+                {flight.flightNumber} - {flight.airline} da {flight.origin} ({flight.scheduled}) - {flight.status}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Nessun dato disponibile</p>
+        )}
+        <h2>Arrivi Malpensa (MXP)</h2>
+        {malpensaFlights.length > 0 ? (
+          <ul>
+            {malpensaFlights.map((flight, index) => (
+              <li key={index}>
+                {flight.flightNumber} - {flight.airline} da {flight.origin} ({flight.scheduled}) - {flight.status}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Nessun dato disponibile</p>
+        )}
       </div>
     </div>
   );
